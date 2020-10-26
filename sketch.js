@@ -1,44 +1,82 @@
-const w = 800;
-let amp = 10;
-let per = 10;
-let max_per = 100;
-const points = [];
-let slider;
+// colors
+const SCREEN_COLOR = "#565656";
+const FLOOR_COLOR = "#262626";
+const BACKGROUND_COLOR = "#161616";
+const FUNCTION_COLOR = "#16ff16";
+
+// drawing params
+const scale = 30;
+const s_length = 6;
+const s_height = 3;
+const sample = 100;
 
 function setup() {
-  createCanvas(800, windowHeight);
-  slider = createSlider(1, 100, 30);
+  createCanvas(windowWidth, windowHeight, WEBGL);
 }
-
-const f1 = (x) => {
-  return x ** 2;
-};
-
-const m_sin = (x) => {
-  return sin((x / w) * per * PI) * amp;
-};
-
-const graph = (f) => {
-  let hw = w / 2;
-  let prev = {};
-  let p = {};
-  for (let i = -hw; i < hw; i++) {
-    p = {};
-    p.x = i;
-    p.y = -f(i);
-    beginShape();
-    vertex(prev.x, prev.y);
-    vertex(p.x, p.y);
-    endShape();
-    prev = p;
-  }
-};
 
 function draw() {
-  background("#161616");
-  translate(width / 2, height / 2);
-  stroke(255);
-  amp = slider.value();
-  per = max_per - slider.value();
-  graph(m_sin);
+  background(BACKGROUND_COLOR);
+  orbitControl(5, 5, 5);
+  drawScreens();
+  drawFloor();
+  drawFunctionOnScreen(func1);
 }
+
+const func1 = (x) => {
+  return x ** 3;
+};
+
+const func2 = (x) => {
+  return x ** 3;
+};
+
+const drawFunctionOnScreen = (f) => {
+  const window_length = 10;
+  const window_height = 10;
+  const length_ratio = window_length / (sample / 2);
+  const height_ratio = window_height / (sample / 2);
+  let p;
+  stroke(FUNCTION_COLOR);
+  noFill();
+  beginShape();
+  for (let i = -(sample / 2); i < sample / 2; i++) {
+    p = {};
+    p.x = length_ratio * i;
+    p.y = -(f(i) * height_ratio);
+    p.z = s_length + 1;
+    vertex(p.x * scale, p.y * scale, p.z * scale);
+  }
+  endShape();
+};
+
+const drawScreens = () => {
+  stroke(SCREEN_COLOR);
+  noFill();
+  // front screen
+  beginShape();
+  vertex(s_length * scale, s_height * scale, (s_length + 1) * scale);
+  vertex(s_length * scale, -s_height * scale, (s_length + 1) * scale);
+  vertex(-s_length * scale, -s_height * scale, (s_length + 1) * scale);
+  vertex(-s_length * scale, s_height * scale, (s_length + 1) * scale);
+  vertex(s_length * scale, s_height * scale, (s_length + 1) * scale);
+  endShape();
+  // side screen
+  beginShape();
+  vertex((s_length + 1) * scale, s_height * scale, -s_length * scale);
+  vertex((s_length + 1) * scale, -s_height * scale, -s_length * scale);
+  vertex((s_length + 1) * scale, -s_height * scale, s_length * scale);
+  vertex((s_length + 1) * scale, s_height * scale, s_length * scale);
+  vertex((s_length + 1) * scale, s_height * scale, -s_length * scale);
+  endShape();
+};
+
+const drawFloor = () => {
+  stroke(FLOOR_COLOR);
+  fill(FLOOR_COLOR);
+  beginShape();
+  vertex(s_length * scale, (s_height + 0.5) * scale, -s_length * scale);
+  vertex(s_length * scale, (s_height + 0.5) * scale, s_length * scale);
+  vertex(-s_length * scale, (s_height + 0.5) * scale, s_length * scale);
+  vertex(-s_length * scale, (s_height + 0.5) * scale, -s_length * scale);
+  endShape();
+};
