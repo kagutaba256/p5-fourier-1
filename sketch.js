@@ -13,7 +13,7 @@ const SUM_COLOR = '#aa8416'
 const scale = 30
 const s_length = 6
 const s_height = 3
-const sample = 10
+const sample = 100
 
 // private vars
 let function_points = []
@@ -29,8 +29,8 @@ function draw() {
   rotateY(frameCount * -ROTATE_SPEED)
   drawScreens()
   drawFloor()
-  drawFunctionOnScreen(func3)
-  drawFourierOnScreen(func3)
+  drawFunctionOnScreen(func2)
+  drawFourierOnScreen(func2)
 }
 
 const func1 = (x) => {
@@ -38,14 +38,11 @@ const func1 = (x) => {
 }
 
 const func2 = (x) => {
-  return sin(x)
+  return sin(x) * 3
 }
 
 const func3 = (x) => {
-  if (-2 < x && x < 2) {
-    return 2
-  }
-  return 0
+  return x % 4
 }
 
 const drawFunctionOnScreen = (f) => {
@@ -104,7 +101,7 @@ const drawFourierOnScreen = (f) => {
   frequencies.map((frequency, i) => {
     p = {}
     p.x = (s_length + 1) * scale
-    p.y = frequency.real * yscale * scale
+    p.y = frequency.imag * yscale * scale
     p.z = (i - sample / 2) * (-s_length / (sample / 2)) * scale
     vertex(p.x, p.y, p.z)
   })
