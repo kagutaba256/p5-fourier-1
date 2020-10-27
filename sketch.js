@@ -13,7 +13,7 @@ const SUM_COLOR = '#aa8416'
 const scale = 30
 const s_length = 6
 const s_height = 3
-const sample = 76
+const sample = 10
 
 // private vars
 let function_points = []
@@ -29,8 +29,8 @@ function draw() {
   rotateY(frameCount * -ROTATE_SPEED)
   drawScreens()
   drawFloor()
-  drawFunctionOnScreen(func1)
-  drawFourierOnScreen(func1)
+  drawFunctionOnScreen(func3)
+  drawFourierOnScreen(func3)
 }
 
 const func1 = (x) => {
@@ -38,12 +38,19 @@ const func1 = (x) => {
 }
 
 const func2 = (x) => {
-  return x
+  return sin(x)
+}
+
+const func3 = (x) => {
+  if (-2 < x && x < 2) {
+    return 2
+  }
+  return 0
 }
 
 const drawFunctionOnScreen = (f) => {
   let p
-  let yscale = 0.00005
+  let yscale = 1
   let points = []
   for (let i = -(sample / 2); i < sample / 2; i++) {
     function_points[i + sample / 2] = f(i)
@@ -85,7 +92,7 @@ const fourier = (f) => {
 }
 
 const drawFourierOnScreen = (f) => {
-  let yscale = 0.00005
+  let yscale = 1
   const data = new ComplexArray(sample).map((value, i) => {
     value.real = f(i)
   })
@@ -97,7 +104,7 @@ const drawFourierOnScreen = (f) => {
   frequencies.map((frequency, i) => {
     p = {}
     p.x = (s_length + 1) * scale
-    p.y = frequency.imag * yscale * scale
+    p.y = frequency.real * yscale * scale
     p.z = (i - sample / 2) * (-s_length / (sample / 2)) * scale
     vertex(p.x, p.y, p.z)
   })
